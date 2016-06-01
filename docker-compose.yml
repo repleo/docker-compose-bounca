@@ -1,6 +1,6 @@
 bounca:
   restart: always
-  image: repleo/bounca:latest
+  image: repleo/bounca:v0.1.0
   expose:
     - "8000"
   links:
