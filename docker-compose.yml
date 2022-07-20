@@ -1,34 +1,36 @@
-bounca:
-  restart: always
-  image: repleo/bounca:v0.1.0
-  expose:
-    - "8000"
-  links:
-    - postgres:postgres
-  volumes:
-    - /srv/www/bounca
-    - /srv/www/bounca/static
-  env_file: .env
-  environment:
-    DEBUG: 'true'
-  command: /usr/local/bin/gunicorn bounca.wsgi:application -w 2 -b :8000 --chdir /srv/www/bounca
-
-nginx:
-  restart: always
-  build: ./nginx/
-  ports:
-    - "80:80"
-  volumes:
-    - /www/static
-  volumes_from:
-    - bounca
-  links:
-    - bounca:bounca
-
-postgres:
-  restart: always
-  image: postgres:latest
-  ports:
-    - "5432:5432"
-  volumes:
-    - pgdata:/var/lib/postgresql/data/
+version: "3.9"
+services:
+  bounca:
+    restart: always
+    image: repleo/bounca:v0.1.0
+    expose:
+      - "8000"
+    links:
+      - postgres:postgres
+    volumes:
+      - /srv/www/bounca
+      - /srv/www/bounca/static
+    env_file: .env
+    environment:
+      DEBUG: 'true'
+    command: /usr/local/bin/gunicorn bounca.wsgi:application -w 2 -b :8000 --chdir /srv/www/bounca
+  
+  nginx:
+    restart: always
+    build: ./nginx/
+    ports:
+      - "80:80"
+    volumes:
+      - /www/static
+    volumes_from:
+      - bounca
+    links:
+      - bounca:bounca
+  
+  postgres:
+    restart: always
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
